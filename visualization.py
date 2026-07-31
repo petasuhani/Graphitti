@@ -10,6 +10,8 @@ username = os.getenv("NEO4J_USERNAME")
 password = os.getenv("NEO4J_PASSWORD")
 
 driver = GraphDatabase.driver(uri, auth=(username, password))
+
+
 def fetch_graph(tx):
     query = """
     MATCH (n)-[r]->(m)
@@ -25,9 +27,6 @@ def fetch_graph(tx):
     return [record.data() for record in result]
 
 
-# -----------------------------
-# Node Colors
-# -----------------------------
 def get_color(label):
     colors = {
         "PERSON": "#FF6B6B",
@@ -41,9 +40,6 @@ def get_color(label):
     return colors.get(label, "#A0AEC0")
 
 
-# -----------------------------
-# Node Shapes
-# -----------------------------
 def get_shape(label):
     shapes = {
         "PERSON": "diamond",
@@ -57,16 +53,13 @@ def get_shape(label):
     return shapes.get(label, "dot")
 
 
-# -----------------------------
-# Build Visualization
-# -----------------------------
 def build_visualization(records):
 
     net = Network(
         height="850px",
         width="100%",
         bgcolor="#0A1016",
-        font_color="white",  # Changed to white
+        font_color="white",
         directed=True,
         notebook=False
     )
@@ -85,7 +78,7 @@ def build_visualization(records):
                 title=f"{source}<br>Type : {record['source_label']}",
                 color=get_color(record["source_label"]),
                 shape=get_shape(record["source_label"]),
-                size=40,  # Increased node size
+                size=40,
                 borderWidth=2
             )
             added_nodes.add(source)
@@ -97,27 +90,26 @@ def build_visualization(records):
                 title=f"{target}<br>Type : {record['target_label']}",
                 color=get_color(record["target_label"]),
                 shape=get_shape(record["target_label"]),
-                size=40,  # Increased node size
+                size=40,
                 borderWidth=2
             )
             added_nodes.add(target)
 
         net.add_edge(
-         source,
-         target,
-         label=record["relationship"],
-         title=record["relationship"],
-        font={
-        "size": 16,
-        "color": "white",
-        "strokeWidth": 2
-    },
-        width=3,
-        color="#34BA42",
-        arrows="to",
-        smooth=False
-)
-        
+            source,
+            target,
+            label=record["relationship"],
+            title=record["relationship"],
+            font={
+                "size": 16,
+                "color": "white",
+                "strokeWidth": 2
+            },
+            width=3,
+            color="#34BA42",
+            arrows="to",
+            smooth=False
+        )
 
     net.set_options("""
     var options = {
@@ -169,8 +161,9 @@ def build_visualization(records):
 
     net.show("graph.html", notebook=False)
 
-    print("\\nGraph Generated Successfully!")
+    print("\nGraph Generated Successfully!")
     print("Saved as graph.html")
+
 
 def generate_visualization():
 

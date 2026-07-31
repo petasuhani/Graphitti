@@ -1,9 +1,7 @@
 import spacy
 
-# Load spaCy model
 nlp = spacy.load("en_core_web_lg")
 
-# Allowed entity types
 VALID_ENTITY_TYPES = {
     "PERSON",
     "ORG",
@@ -15,7 +13,6 @@ VALID_ENTITY_TYPES = {
     "WORK_OF_ART"
 }
 
-# Pronouns to ignore
 PRONOUNS = {
     "he", "she", "it", "they", "them",
     "his", "her", "hers", "him",
@@ -27,10 +24,6 @@ PRONOUNS = {
 
 
 def build_entity_map(doc):
-    """
-    Maps every token belonging to a named entity
-    to the complete entity text.
-    """
 
     entity_map = {}
 
@@ -56,27 +49,21 @@ def extract_triplets(doc):
 
     for token in doc:
 
-        # Only verbs become relationships
         if token.pos_ != "VERB":
             continue
 
         subject = None
         obj = None
 
-        # -------------------------
-        # Find Subject
-        # -------------------------
         for child in token.children:
 
             if child.dep_ in ("nsubj", "nsubjpass"):
 
-                # Prefer a named entity
                 for tok in child.subtree:
                     if tok.i in entity_map:
                         subject = entity_map[tok.i]
                         break
 
-                # Otherwise use noun phrase
                 if subject is None:
                     continue
 
@@ -87,20 +74,15 @@ def extract_triplets(doc):
                     ):
                         subject = phrase
 
-        # -------------------------
-        # Find Object
-        # -------------------------
         for child in token.children:
 
             if child.dep_ in ("dobj", "pobj", "attr", "dative", "oprd"):
 
-                # Prefer named entity
                 for tok in child.subtree:
                     if tok.i in entity_map:
                         obj = entity_map[tok.i]
                         break
 
-                # Otherwise noun phrase
                 if obj is None:
                     continue
 
@@ -111,9 +93,6 @@ def extract_triplets(doc):
                     ):
                         obj = phrase
 
-        # -------------------------
-        # Skip bad triplets
-        # -------------------------
         if subject is None or obj is None:
             continue
 
@@ -134,10 +113,6 @@ def extract_triplets(doc):
             "object": obj
 
         })
-
-    # -------------------------
-    # Remove duplicates
-    # -------------------------
 
     unique = []
     seen = set()
@@ -171,7 +146,6 @@ def run_nlp_pipeline(documents):
 
         doc = nlp(document["text"])
 
-        # Extract entities
         entities = []
 
         for ent in doc.ents:
@@ -187,7 +161,6 @@ def run_nlp_pipeline(documents):
                 "label": ent.label_
             })
 
-        # Remove duplicate entities
         seen_entities = set()
         unique_entities = []
 
@@ -199,7 +172,6 @@ def run_nlp_pipeline(documents):
                 seen_entities.add(key)
                 unique_entities.append(ent)
 
-        # Extract triplets
         triplets = extract_triplets(doc)
 
         print(f"Entities : {len(unique_entities)}")
@@ -220,10 +192,6 @@ def run_nlp_pipeline(documents):
 
     return results
 
-
-# ---------------------------------------
-# Testing
-# ---------------------------------------
 
 if __name__ == "__main__":
 

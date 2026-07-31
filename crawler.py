@@ -2,17 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-# -----------------------------
-# Function to clean webpage text
-# -----------------------------
+
 def clean_text(text):
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
 
-# -----------------------------
-# Crawl a single URL
-# -----------------------------
 def crawl_url(url):
     try:
         headers = {
@@ -27,12 +22,10 @@ def crawl_url(url):
 
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # Remove unwanted tags
         for tag in soup(["script", "style", "noscript", "header", "footer", "nav", "aside"]):
             tag.decompose()
 
         text = soup.get_text(separator=" ")
-
         text = clean_text(text)
 
         return {
@@ -46,17 +39,12 @@ def crawl_url(url):
         return None
 
 
-# -----------------------------
-# Crawl multiple URLs
-# -----------------------------
 def crawl(urls):
-
     documents = []
 
     print("\nStarting Crawling...\n")
 
     for url in urls:
-
         print(f"Crawling: {url}")
 
         document = crawl_url(url)
@@ -64,7 +52,6 @@ def crawl(urls):
         if document:
             documents.append(document)
             print("✔ Success\n")
-
         else:
             print("✖ Failed\n")
 
@@ -74,17 +61,13 @@ def crawl(urls):
     return documents
 
 
-# -----------------------------
-# Testing
-# -----------------------------
 if __name__ == "__main__":
-
     n = int(input("How many URLs do you want to crawl? "))
 
     urls = []
 
     for i in range(n):
-        url = input(f"Enter URL {i+1}: ")
+        url = input(f"Enter URL {i + 1}: ")
         urls.append(url)
 
     docs = crawl(urls)
@@ -94,5 +77,5 @@ if __name__ == "__main__":
         print(f"Document {i}")
         print("URL:", doc["url"])
         print()
-        print(doc["text"][:1000])   # Print first 1000 characters
+        print(doc["text"][:1000])
         print()
