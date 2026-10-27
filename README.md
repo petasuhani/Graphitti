@@ -1,18 +1,84 @@
-
+```markdown
 # Graphitti — Graph-Native Web Intelligence
 
-Graphitti turns web pages into a knowledge graph and answers natural-language questions using graph search and semantic search. It combines NLP, Neo4j, ChromaDB, and Llama 3 to retrieve relevant information and generate answers.
+Graphitti converts web pages into a knowledge graph and answers natural-language questions using graph search and semantic search. It combines NLP, Neo4j, ChromaDB, and Llama 3 to retrieve relevant information and generate answers.
 
 ## Features
 
-- **Web Crawling:** Extracts text from web pages using Requests and BeautifulSoup.
-- **NLP Extraction:** Uses spaCy to identify entities and relationships.
-- **Knowledge Graph:** Stores entities and relationships in Neo4j.
-- **Graph Visualization:** Explores the knowledge graph using PyVis.
-- **Semantic Search:** Uses sentence-transformers and ChromaDB to find relevant text.
-- **Hybrid Retrieval:** Combines graph queries and vector search to answer questions.
-- **Question Answering:** Uses Llama 3 through Ollama to generate answers from retrieved information.
-- **User Interface:** Provides an interactive Streamlit app and a command-line interface.
+- Web crawling using Requests and BeautifulSoup
+- Entity and relationship extraction using spaCy
+- Knowledge graph construction using Neo4j
+- Interactive graph visualization using PyVis
+- Semantic search using ChromaDB and sentence-transformers
+- Hybrid retrieval and question answering using Llama 3
+- Interactive Streamlit interface and CLI support
+
+## Architecture
+
+```text
+          Web URLs
+              |
+              v
+       crawler.py
+    (Extracts web text)
+              |
+              v
+          nlp.py
+ (Extracts entities and relations)
+              |
+              v
+      graph_pipeline.py
+              |
+              v
+          Neo4j
+     (Knowledge Graph)
+
+  Web Text ---> embeddings.py ---> chroma.py
+                                      |
+                                      v
+                                  ChromaDB
+                               (Vector Search)
+
+          User Question
+                |
+                v
+      query_classifier.py
+                |
+                v
+       hybrid_retriever.py
+          /           \
+         v             v
+graph_retriever.py  vector_retriever.py
+         \             /
+          v           v
+       Retrieved Context
+                |
+                v
+      answer_generator.py
+                |
+                v
+          Final Answer
+```
+
+## Project Structure
+
+| File | Purpose |
+|---|---|
+| `app.py` | Streamlit web interface |
+| `main.py` | Command-line interface |
+| `crawler.py` | Fetches and cleans web page content |
+| `nlp.py` | Extracts entities and relationships |
+| `graph_pipeline.py` | Stores extracted information in Neo4j |
+| `visualization.py` | Creates interactive graph visualizations |
+| `embeddings.py` | Generates text embeddings |
+| `chroma.py` | Manages the ChromaDB vector store |
+| `query_classifier.py` | Classifies questions for retrieval |
+| `graph_retriever.py` | Retrieves information from Neo4j |
+| `vector_retriever.py` | Retrieves relevant text using vector search |
+| `hybrid_retriever.py` | Combines graph and vector retrieval |
+| `answer_generator.py` | Generates answers from retrieved context |
+| `langgraph_pipeline.py` | Orchestrates retrieval and answer generation |
+| `config.py` | Manages configuration settings |
 
 ## Tech Stack
 
@@ -29,81 +95,23 @@ Graphitti turns web pages into a knowledge graph and answers natural-language qu
 
 ## Setup
 
-### Prerequisites
+1. Clone the repository.
+2. Install dependencies using `pip install -r requirements.txt`.
+3. Download the spaCy model using `python -m spacy download en_core_web_lg`.
+4. Install Ollama and download Llama 3 using `ollama pull llama3`.
+5. Configure Neo4j credentials using environment variables in a `.env` file.
+6. Run `streamlit run app.py` to start the application.
 
-- Python 3.10+
-- A Neo4j database (local or Neo4j Aura)
-- Ollama installed on your system
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/petasuhani/Graphitti.git
-cd Graphitti
-```
-
-### 2. Install dependencies
-
-```bash
-pip install -r requirements.txt
-python -m spacy download en_core_web_lg
-```
-
-### 3. Set up Ollama
-
-Download the Llama 3 model:
-
-```bash
-ollama pull llama3
-```
-
-Make sure Ollama is running before starting the application.
-
-### 4. Configure Neo4j
-
-Create a `.env` file in the project directory and add your database credentials:
-
-```env
-NEO4J_URI=your-neo4j-uri
-NEO4J_USERNAME=your-username
-NEO4J_PASSWORD=your-password
-NEO4J_DATABASE=neo4j
-```
-
-Replace the placeholder values with your actual credentials.
-
-### 5. Run the application
-
-Start the Streamlit interface:
-
-```bash
-streamlit run app.py
-```
-
-Or run the command-line version:
-
-```bash
-python main.py
-```
-
-## How It Works
-
-1. Crawls web pages and extracts their text.
-2. Uses spaCy to extract entities and relationships.
-3. Stores the extracted information in Neo4j.
-4. Converts text into embeddings and stores them in ChromaDB.
-5. Classifies questions to determine whether graph search, vector search, or both are needed.
-6. Retrieves relevant information and uses an LLM to generate an answer.
+Alternatively, run `python main.py` to use the command-line interface.
 
 ## Security
 
 Keep your Neo4j credentials and API keys private. Store them in environment variables, add `.env` to `.gitignore`, and never commit secrets to a public repository.
-
-## Limitations
-
-- Relationship extraction depends on the quality and structure of the source text.
-- Answer quality depends on the LLM and the information retrieved.
-- Each pipeline run clears the existing graph, so previous graph data may be replaced.
 ```
 
-**Before committing:** Make sure the setup instructions match your current code, `.env` is included in `.gitignore`, and any previously exposed Neo4j credentials have been rotated.
+**Before publishing:**
+- Make sure the file names in the architecture and project structure match your actual repository.
+- Confirm that the `.env` file is ignored by Git.
+- If real Neo4j credentials were committed publicly, rotate them immediately.
+
+The architecture diagram is written in a simple text format, so GitHub will display it directly without requiring an image.
