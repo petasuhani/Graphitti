@@ -1,4 +1,4 @@
-```markdown
+
 # Graphitti — Graph-Native Web Intelligence
 
 Graphitti converts web pages into a knowledge graph and answers natural-language questions using graph search and semantic search. It combines NLP, Neo4j, ChromaDB, and Llama 3 to retrieve relevant information and generate answers.
