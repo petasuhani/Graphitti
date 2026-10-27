@@ -104,7 +104,7 @@ graph_retriever.py  vector_retriever.py
 
 Alternatively, run `python main.py` to use the command-line interface.
 
-## Security
+## SECURITY
 
 Keep your Neo4j credentials and API keys private. Store them in environment variables, add `.env` to `.gitignore`, and never commit secrets to a public repository.
 
