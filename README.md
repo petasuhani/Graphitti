@@ -107,7 +107,7 @@ Alternatively, run `python main.py` to use the command-line interface.
 ## Security
 
 Keep your Neo4j credentials and API keys private. Store them in environment variables, add `.env` to `.gitignore`, and never commit secrets to a public repository.
-```
+
 
 **Before publishing:**
 - Make sure the file names in the architecture and project structure match your actual repository.
